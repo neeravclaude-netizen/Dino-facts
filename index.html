@@ -35,7 +35,7 @@
     position: fixed; top: 0; left: 0; right: 0; z-index: 100;
     display: flex; justify-content: space-between; align-items: center;
     padding: 1.25rem 3rem;
-    background: rgba(26,18,8,0.85);
+    background: rgba(26,18,8,0.92);
     backdrop-filter: blur(12px);
     border-bottom: 1px solid rgba(196,168,107,0.2);
   }
@@ -43,6 +43,57 @@
   .nav-links { display: flex; gap: 2.5rem; list-style: none; }
   .nav-links a { font-size: 0.78rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--bone); opacity: 0.7; text-decoration: none; transition: opacity 0.2s; }
   .nav-links a:hover { opacity: 1; color: var(--fossil); }
+
+  /* HAMBURGER */
+  .nav-toggle {
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    gap: 5px;
+    width: 36px; height: 36px;
+    cursor: pointer;
+    background: none; border: none;
+    padding: 4px;
+    z-index: 110;
+  }
+  .nav-toggle span {
+    display: block; width: 100%; height: 1.5px;
+    background: var(--fossil);
+    transition: transform 0.3s, opacity 0.3s;
+    transform-origin: center;
+  }
+  .nav-toggle.open span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
+  .nav-toggle.open span:nth-child(2) { opacity: 0; }
+  .nav-toggle.open span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
+
+  /* MOBILE NAV DRAWER */
+  .nav-drawer {
+    display: none;
+    position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 99;
+    background: rgba(26,18,8,0.97);
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2.5rem;
+    list-style: none;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s;
+  }
+  .nav-drawer.open {
+    opacity: 1;
+    pointer-events: all;
+  }
+  .nav-drawer a {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2.8rem;
+    letter-spacing: 0.12em;
+    color: var(--bone);
+    text-decoration: none;
+    opacity: 0.7;
+    transition: opacity 0.2s, color 0.2s;
+  }
+  .nav-drawer a:hover { opacity: 1; color: var(--fossil); }
 
   /* HERO */
   .hero {
@@ -94,6 +145,7 @@
     display: flex; gap: 3rem; margin-top: 3rem;
     padding-top: 2rem;
     border-top: 1px solid rgba(196,168,107,0.25);
+    flex-wrap: wrap;
   }
   .stat-num { font-family: 'Bebas Neue', sans-serif; font-size: 2.2rem; color: var(--fossil); letter-spacing: 0.08em; }
   .stat-label { font-size: 0.7rem; letter-spacing: 0.16em; text-transform: uppercase; opacity: 0.55; margin-top: 2px; }
@@ -222,9 +274,6 @@
     margin-top: 1rem;
   }
 
-  @media (max-width: 900px) { .types-grid { grid-template-columns: 1fr 1fr; } }
-  @media (max-width: 600px) { .types-grid { grid-template-columns: 1fr; } }
-
   .dino-card {
     border: 1px solid rgba(196,168,107,0.15);
     padding: 2rem 1.75rem;
@@ -278,8 +327,9 @@
     font-size: 0.85rem; letter-spacing: 0.22em; text-transform: uppercase;
     color: var(--mud); margin-bottom: 2rem;
   }
-  .facts-scroll { display: flex; gap: 3rem; }
-  .fact-item { min-width: 220px; }
+  .facts-scroll { display: flex; gap: 3rem; overflow-x: auto; -webkit-overflow-scrolling: touch; padding-bottom: 0.5rem; scrollbar-width: none; }
+  .facts-scroll::-webkit-scrollbar { display: none; }
+  .fact-item { min-width: 180px; flex-shrink: 0; }
   .fact-num { font-family: 'Bebas Neue', sans-serif; font-size: 3.5rem; color: var(--mud); line-height: 1; }
   .fact-label { font-size: 0.8rem; color: var(--mud); opacity: 0.7; margin-top: 0.25rem; line-height: 1.4; }
 
@@ -289,6 +339,92 @@
     border-top: 1px solid rgba(196,168,107,0.15);
     display: flex; justify-content: space-between; align-items: center;
     font-size: 0.75rem; opacity: 0.4;
+    flex-wrap: wrap; gap: 0.5rem;
+  }
+
+  /* =====================
+     MOBILE BREAKPOINTS
+  ===================== */
+
+  @media (max-width: 900px) {
+    .types-grid { grid-template-columns: 1fr 1fr; }
+  }
+
+  @media (max-width: 768px) {
+    /* Nav */
+    nav { padding: 1rem 1.5rem; }
+    .nav-links { display: none; }
+    .nav-toggle { display: flex; }
+
+    /* Hero */
+    .hero { padding: 0 1.5rem 4rem; }
+    .hero-deco { font-size: clamp(10rem, 60vw, 20rem); opacity: 0.03; right: -1rem; }
+    .hero-stats { gap: 1.5rem; }
+    .hero-stats > div { min-width: calc(50% - 0.75rem); }
+    .scroll-cue { right: 1.5rem; bottom: 1.5rem; }
+
+    /* Sections */
+    section { padding: 5rem 1.5rem; }
+
+    /* Timeline — stack vertically on mobile */
+    .timeline::before { left: 0; }
+    .timeline-item {
+      grid-template-columns: 1fr;
+      gap: 0.75rem;
+      padding-left: 1.5rem;
+    }
+    .timeline-period {
+      text-align: left;
+      padding-right: 0;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .timeline-period::after {
+      position: static;
+      flex-shrink: 0;
+      order: -1;
+    }
+
+    /* Evo grid */
+    .evo-grid { grid-template-columns: 1fr; }
+
+    /* Types grid */
+    .types-grid { grid-template-columns: 1fr; }
+
+    /* Facts band */
+    .facts-band { padding: 2.5rem 1.5rem; }
+
+    /* Footer */
+    footer { padding: 2rem 1.5rem; flex-direction: column; align-items: flex-start; gap: 0.4rem; }
+  }
+
+  @media (max-width: 480px) {
+    /* Nav */
+    nav { padding: 0.9rem 1.25rem; }
+    .nav-logo { font-size: 1.5rem; }
+
+    /* Hero */
+    .hero { padding: 0 1.25rem 3.5rem; }
+    .hero-eyebrow { font-size: 0.65rem; }
+    .hero-sub { font-size: 1rem; }
+    .hero-stats { gap: 1rem; }
+    .hero-stats > div { min-width: calc(50% - 0.5rem); }
+    .stat-num { font-size: 1.8rem; }
+    .stat-label { font-size: 0.62rem; }
+    .scroll-cue { display: none; }
+
+    /* Sections */
+    section { padding: 4rem 1.25rem; }
+    .section-title { margin-bottom: 2rem; }
+
+    /* Dino cards — tighten padding */
+    .dino-card { padding: 1.5rem 1.25rem; }
+    .dino-name { font-size: 1.6rem; }
+
+    /* Facts */
+    .facts-band { padding: 2rem 1.25rem; }
+    .fact-num { font-size: 2.8rem; }
   }
 </style>
 </head>
@@ -302,7 +438,18 @@
     <li><a href="#types">Types</a></li>
     <li><a href="#facts">Facts</a></li>
   </ul>
+  <button class="nav-toggle" aria-label="Toggle navigation" aria-expanded="false">
+    <span></span><span></span><span></span>
+  </button>
 </nav>
+
+<!-- MOBILE NAV DRAWER -->
+<ul class="nav-drawer" id="navDrawer">
+  <li><a href="#history">History</a></li>
+  <li><a href="#evolution">Evolution</a></li>
+  <li><a href="#types">Types</a></li>
+  <li><a href="#facts">Facts</a></li>
+</ul>
 
 <!-- HERO -->
 <section class="hero">
@@ -533,6 +680,7 @@
 </footer>
 
 <script>
+  // Scroll animations
   const items = document.querySelectorAll('.timeline-item, .evo-card, .dino-card');
   const obs = new IntersectionObserver((entries) => {
     entries.forEach((e, i) => {
@@ -549,6 +697,39 @@
     el.style.transform = 'translateY(24px)';
     el.style.transition = 'opacity 0.55s ease, transform 0.55s ease';
     obs.observe(el);
+  });
+
+  // Hamburger menu
+  const toggle = document.querySelector('.nav-toggle');
+  const drawer = document.getElementById('navDrawer');
+
+  toggle.addEventListener('click', () => {
+    const isOpen = drawer.classList.toggle('open');
+    toggle.classList.toggle('open', isOpen);
+    toggle.setAttribute('aria-expanded', isOpen);
+    drawer.style.display = isOpen ? 'flex' : 'none';
+    document.body.style.overflow = isOpen ? 'hidden' : '';
+  });
+
+  // Close drawer on link click
+  drawer.querySelectorAll('a').forEach(link => {
+    link.addEventListener('click', () => {
+      drawer.classList.remove('open');
+      toggle.classList.remove('open');
+      toggle.setAttribute('aria-expanded', 'false');
+      drawer.style.display = 'none';
+      document.body.style.overflow = '';
+    });
+  });
+
+  // Show drawer correctly on resize
+  window.addEventListener('resize', () => {
+    if (window.innerWidth > 768) {
+      drawer.style.display = 'none';
+      drawer.classList.remove('open');
+      toggle.classList.remove('open');
+      document.body.style.overflow = '';
+    }
   });
 </script>
 </body>
