@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DINO — Earth's Ancient Giants</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bone: #F2EBD9;
+    --cream: #FAF6EE;
+    --earth: #8B6914;
+    --mud: #4A3510;
+    --fossil: #C4A86B;
+    --deep: #1A1208;
+    --rust: #B84B1A;
+    --sage: #5A6B3A;
+    --ink: #2A1F0E;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--deep);
+    color: var(--bone);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    overflow-x: hidden;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 1.25rem 3rem;
+    background: rgba(26,18,8,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(196,168,107,0.2);
+  }
+  .nav-logo { font-family: 'Bebas Neue', sans-serif; font-size: 1.8rem; letter-spacing: 0.12em; color: var(--fossil); }
+  .nav-links { display: flex; gap: 2.5rem; list-style: none; }
+  .nav-links a { font-size: 0.78rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--bone); opacity: 0.7; text-decoration: none; transition: opacity 0.2s; }
+  .nav-links a:hover { opacity: 1; color: var(--fossil); }
+
+  /* HAMBURGER */
+  .nav-toggle {
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    gap: 5px;
+    width: 36px; height: 36px;
+    cursor: pointer;
+    background: none; border: none;
+    padding: 4px;
+    z-index: 110;
+  }
+  .nav-toggle span {
+    display: block; width: 100%; height: 1.5px;
+    background: var(--fossil);
+    transition: transform 0.3s, opacity 0.3s;
+    transform-origin: center;
+  }
+  .nav-toggle.open span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
+  .nav-toggle.open span:nth-child(2) { opacity: 0; }
+  .nav-toggle.open span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
+
+  /* MOBILE NAV DRAWER */
+  .nav-drawer {
+    display: none;
+    position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 99;
+    background: rgba(26,18,8,0.97);
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2.5rem;
+    list-style: none;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s;
+  }
+  .nav-drawer.open {
+    opacity: 1;
+    pointer-events: all;
+  }
+  .nav-drawer a {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2.8rem;
+    letter-spacing: 0.12em;
+    color: var(--bone);
+    text-decoration: none;
+    opacity: 0.7;
+    transition: opacity 0.2s, color 0.2s;
+  }
+  .nav-drawer a:hover { opacity: 1; color: var(--fossil); }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh;
+    display: flex; flex-direction: column; justify-content: flex-end;
+    padding: 0 3rem 5rem;
+    position: relative;
+    overflow: hidden;
+    background:
+      radial-gradient(ellipse 80% 60% at 60% 40%, rgba(139,105,20,0.18) 0%, transparent 70%),
+      radial-gradient(ellipse 50% 40% at 20% 80%, rgba(184,75,26,0.12) 0%, transparent 60%),
+      var(--deep);
+  }
+
+  .hero-grid {
+    position: absolute; inset: 0; pointer-events: none;
+    background-image:
+      linear-gradient(rgba(196,168,107,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(196,168,107,0.04) 1px, transparent 1px);
+    background-size: 60px 60px;
+  }
+
+  .hero-eyebrow {
+    font-size: 0.72rem; letter-spacing: 0.22em; text-transform: uppercase;
+    color: var(--fossil); opacity: 0.8; margin-bottom: 1rem;
+  }
+
+  .hero-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(5rem, 16vw, 14rem);
+    line-height: 0.88;
+    letter-spacing: 0.04em;
+    color: var(--bone);
+    position: relative;
+  }
+  .hero-title span { color: var(--fossil); }
+
+  .hero-sub {
+    font-family: 'DM Serif Display', serif;
+    font-style: italic;
+    font-size: clamp(1rem, 2vw, 1.4rem);
+    color: var(--fossil);
+    margin-top: 1.5rem;
+    max-width: 480px;
+    line-height: 1.5;
+  }
+
+  .hero-stats {
+    display: flex; gap: 3rem; margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: 1px solid rgba(196,168,107,0.25);
+    flex-wrap: wrap;
+  }
+  .stat-num { font-family: 'Bebas Neue', sans-serif; font-size: 2.2rem; color: var(--fossil); letter-spacing: 0.08em; }
+  .stat-label { font-size: 0.7rem; letter-spacing: 0.16em; text-transform: uppercase; opacity: 0.55; margin-top: 2px; }
+
+  .hero-deco {
+    position: absolute; right: -2rem; top: 50%; transform: translateY(-55%);
+    font-size: clamp(18rem, 35vw, 42rem);
+    line-height: 1;
+    opacity: 0.04;
+    pointer-events: none;
+    user-select: none;
+    filter: blur(2px);
+  }
+
+  .scroll-cue {
+    position: absolute; bottom: 2rem; right: 3rem;
+    font-size: 0.68rem; letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--fossil); opacity: 0.5;
+    display: flex; align-items: center; gap: 0.6rem;
+  }
+  .scroll-line { width: 40px; height: 1px; background: var(--fossil); opacity: 0.5; }
+
+  /* SECTIONS */
+  section { padding: 7rem 3rem; }
+
+  .section-tag {
+    font-size: 0.68rem; letter-spacing: 0.22em; text-transform: uppercase;
+    color: var(--fossil); opacity: 0.7; margin-bottom: 1rem;
+    display: flex; align-items: center; gap: 1rem;
+  }
+  .section-tag::after { content: ''; flex: 1; height: 1px; background: rgba(196,168,107,0.25); max-width: 80px; }
+
+  .section-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(2.8rem, 6vw, 5rem);
+    letter-spacing: 0.06em;
+    line-height: 1;
+    color: var(--bone);
+    margin-bottom: 2.5rem;
+  }
+
+  /* HISTORY */
+  .history { background: var(--deep); }
+
+  .timeline {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0;
+    max-width: 860px;
+    margin: 0 auto;
+    position: relative;
+  }
+  .timeline::before {
+    content: '';
+    position: absolute; left: 140px; top: 0; bottom: 0; width: 1px;
+    background: linear-gradient(to bottom, transparent, rgba(196,168,107,0.4) 10%, rgba(196,168,107,0.4) 90%, transparent);
+  }
+
+  .timeline-item {
+    display: grid;
+    grid-template-columns: 140px 1fr;
+    gap: 2.5rem;
+    padding: 2.5rem 0;
+    border-bottom: 1px solid rgba(196,168,107,0.1);
+    position: relative;
+    animation: fadeUp 0.6s ease both;
+  }
+  .timeline-item:last-child { border-bottom: none; }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .timeline-period {
+    text-align: right;
+    padding-right: 2rem;
+    position: relative;
+  }
+  .timeline-period::after {
+    content: '';
+    position: absolute; right: -5px; top: 8px;
+    width: 9px; height: 9px; border-radius: 50%;
+    background: var(--fossil);
+    border: 2px solid var(--deep);
+  }
+  .period-name { font-family: 'Bebas Neue', sans-serif; font-size: 1.1rem; letter-spacing: 0.1em; color: var(--fossil); }
+  .period-mya { font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase; opacity: 0.5; margin-top: 2px; }
+
+  .timeline-content h3 { font-family: 'DM Serif Display', serif; font-size: 1.25rem; color: var(--bone); margin-bottom: 0.5rem; }
+  .timeline-content p { font-size: 0.9rem; line-height: 1.75; opacity: 0.7; }
+
+  /* EVOLUTION */
+  .evolution { background: linear-gradient(180deg, var(--deep) 0%, #120D05 100%); }
+
+  .evo-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5px;
+    margin-top: 1rem;
+    border: 1.5px solid rgba(196,168,107,0.15);
+  }
+
+  .evo-card {
+    background: rgba(255,255,255,0.02);
+    padding: 2.5rem 2rem;
+    border: 1px solid rgba(196,168,107,0.08);
+    transition: background 0.3s;
+    cursor: default;
+  }
+  .evo-card:hover { background: rgba(196,168,107,0.06); }
+
+  .evo-icon { font-size: 2.2rem; margin-bottom: 1.2rem; opacity: 0.9; }
+  .evo-num { font-family: 'Bebas Neue', sans-serif; font-size: 3rem; color: var(--fossil); letter-spacing: 0.06em; line-height: 1; }
+  .evo-unit { font-size: 0.68rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--fossil); opacity: 0.6; }
+  .evo-card h3 { font-family: 'DM Serif Display', serif; font-size: 1.15rem; color: var(--bone); margin: 1rem 0 0.5rem; }
+  .evo-card p { font-size: 0.85rem; line-height: 1.7; opacity: 0.6; }
+
+  /* TYPES */
+  .types { background: #0E0904; }
+
+  .types-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+
+  .dino-card {
+    border: 1px solid rgba(196,168,107,0.15);
+    padding: 2rem 1.75rem;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.3s, transform 0.3s;
+    cursor: default;
+  }
+  .dino-card::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(135deg, rgba(196,168,107,0.05) 0%, transparent 60%);
+    opacity: 0; transition: opacity 0.3s;
+  }
+  .dino-card:hover { border-color: rgba(196,168,107,0.45); transform: translateY(-3px); }
+  .dino-card:hover::before { opacity: 1; }
+
+  .dino-era {
+    font-size: 0.65rem; letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--rust); opacity: 0.85; margin-bottom: 0.75rem;
+  }
+  .dino-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.9rem; letter-spacing: 0.08em;
+    color: var(--bone); line-height: 1; margin-bottom: 0.35rem;
+  }
+  .dino-meaning {
+    font-family: 'DM Serif Display', serif;
+    font-style: italic; font-size: 0.82rem;
+    color: var(--fossil); opacity: 0.75; margin-bottom: 1rem;
+  }
+  .dino-desc { font-size: 0.82rem; line-height: 1.7; opacity: 0.6; margin-bottom: 1.25rem; }
+  .dino-tags { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+  .tag {
+    font-size: 0.62rem; letter-spacing: 0.12em; text-transform: uppercase;
+    padding: 3px 10px;
+    border: 1px solid rgba(196,168,107,0.25);
+    color: var(--fossil); opacity: 0.75;
+  }
+  .dino-emoji { position: absolute; bottom: 1.5rem; right: 1.5rem; font-size: 2.5rem; opacity: 0.18; }
+
+  /* FACTS BAND */
+  .facts-band {
+    background: var(--fossil);
+    padding: 3rem;
+    overflow: hidden;
+    position: relative;
+  }
+  .facts-band-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 0.85rem; letter-spacing: 0.22em; text-transform: uppercase;
+    color: var(--mud); margin-bottom: 2rem;
+  }
+  .facts-scroll { display: flex; gap: 3rem; overflow-x: auto; -webkit-overflow-scrolling: touch; padding-bottom: 0.5rem; scrollbar-width: none; }
+  .facts-scroll::-webkit-scrollbar { display: none; }
+  .fact-item { min-width: 180px; flex-shrink: 0; }
+  .fact-num { font-family: 'Bebas Neue', sans-serif; font-size: 3.5rem; color: var(--mud); line-height: 1; }
+  .fact-label { font-size: 0.8rem; color: var(--mud); opacity: 0.7; margin-top: 0.25rem; line-height: 1.4; }
+
+  /* FOOTER */
+  footer {
+    padding: 3rem;
+    border-top: 1px solid rgba(196,168,107,0.15);
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 0.75rem; opacity: 0.4;
+    flex-wrap: wrap; gap: 0.5rem;
+  }
+
+  /* =====================
+     MOBILE BREAKPOINTS
+  ===================== */
+
+  @media (max-width: 900px) {
+    .types-grid { grid-template-columns: 1fr 1fr; }
+  }
+
+  @media (max-width: 768px) {
+    /* Nav */
+    nav { padding: 1rem 1.5rem; }
+    .nav-links { display: none; }
+    .nav-toggle { display: flex; }
+
+    /* Hero */
+    .hero { padding: 0 1.5rem 4rem; }
+    .hero-deco { font-size: clamp(10rem, 60vw, 20rem); opacity: 0.03; right: -1rem; }
+    .hero-stats { gap: 1.5rem; }
+    .hero-stats > div { min-width: calc(50% - 0.75rem); }
+    .scroll-cue { right: 1.5rem; bottom: 1.5rem; }
+
+    /* Sections */
+    section { padding: 5rem 1.5rem; }
+
+    /* Timeline — stack vertically on mobile */
+    .timeline::before { left: 0; }
+    .timeline-item {
+      grid-template-columns: 1fr;
+      gap: 0.75rem;
+      padding-left: 1.5rem;
+    }
+    .timeline-period {
+      text-align: left;
+      padding-right: 0;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .timeline-period::after {
+      position: static;
+      flex-shrink: 0;
+      order: -1;
+    }
+
+    /* Evo grid */
+    .evo-grid { grid-template-columns: 1fr; }
+
+    /* Types grid */
+    .types-grid { grid-template-columns: 1fr; }
+
+    /* Facts band */
+    .facts-band { padding: 2.5rem 1.5rem; }
+
+    /* Footer */
+    footer { padding: 2rem 1.5rem; flex-direction: column; align-items: flex-start; gap: 0.4rem; }
+  }
+
+  @media (max-width: 480px) {
+    /* Nav */
+    nav { padding: 0.9rem 1.25rem; }
+    .nav-logo { font-size: 1.5rem; }
+
+    /* Hero */
+    .hero { padding: 0 1.25rem 3.5rem; }
+    .hero-eyebrow { font-size: 0.65rem; }
+    .hero-sub { font-size: 1rem; }
+    .hero-stats { gap: 1rem; }
+    .hero-stats > div { min-width: calc(50% - 0.5rem); }
+    .stat-num { font-size: 1.8rem; }
+    .stat-label { font-size: 0.62rem; }
+    .scroll-cue { display: none; }
+
+    /* Sections */
+    section { padding: 4rem 1.25rem; }
+    .section-title { margin-bottom: 2rem; }
+
+    /* Dino cards — tighten padding */
+    .dino-card { padding: 1.5rem 1.25rem; }
+    .dino-name { font-size: 1.6rem; }
+
+    /* Facts */
+    .facts-band { padding: 2rem 1.25rem; }
+    .fact-num { font-size: 2.8rem; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">DINO</div>
+  <ul class="nav-links">
+    <li><a href="#history">History</a></li>
+    <li><a href="#evolution">Evolution</a></li>
+    <li><a href="#types">Types</a></li>
+    <li><a href="#facts">Facts</a></li>
+  </ul>
+  <button class="nav-toggle" aria-label="Toggle navigation" aria-expanded="false">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- MOBILE NAV DRAWER -->
+<ul class="nav-drawer" id="navDrawer">
+  <li><a href="#history">History</a></li>
+  <li><a href="#evolution">Evolution</a></li>
+  <li><a href="#types">Types</a></li>
+  <li><a href="#facts">Facts</a></li>
+</ul>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-deco">🦕</div>
+  <div class="hero-eyebrow">245 million years of Earth's greatest story</div>
+  <h1 class="hero-title">THE<br><span>DINO</span><br>SAURS</h1>
+  <p class="hero-sub">From tiny feathered hunters to the largest animals to ever walk the Earth.</p>
+  <div class="hero-stats">
+    <div>
+      <div class="stat-num">245M</div>
+      <div class="stat-label">Years ago they appeared</div>
+    </div>
+    <div>
+      <div class="stat-num">700+</div>
+      <div class="stat-label">Named species</div>
+    </div>
+    <div>
+      <div class="stat-num">135M</div>
+      <div class="stat-label">Years they ruled Earth</div>
+    </div>
+    <div>
+      <div class="stat-num">10K+</div>
+      <div class="stat-label">Species alive today (birds)</div>
+    </div>
+  </div>
+  <div class="scroll-cue"><span class="scroll-line"></span> Scroll to explore</div>
+</section>
+
+<!-- HISTORY -->
+<section class="history" id="history">
+  <div class="section-tag">Chapter 01</div>
+  <h2 class="section-title">Their History</h2>
+
+  <div class="timeline">
+    <div class="timeline-item">
+      <div class="timeline-period">
+        <div class="period-name">Triassic</div>
+        <div class="period-mya">252–201 MYA</div>
+      </div>
+      <div class="timeline-content">
+        <h3>The First Dinosaurs Emerge</h3>
+        <p>After the largest mass extinction in Earth's history wiped out 96% of marine species, dinosaurs first appeared in the late Triassic period. Early dinosaurs like Eoraptor and Herrerasaurus were small, fast bipedal hunters. They shared the world with early crocodilians and large amphibians, competing fiercely for survival on the supercontinent Pangaea.</p>
+      </div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-period">
+        <div class="period-name">Jurassic</div>
+        <div class="period-mya">201–145 MYA</div>
+      </div>
+      <div class="timeline-content">
+        <h3>The Age of Giants</h3>
+        <p>As Pangaea broke apart and lush forests spread across the planet, dinosaurs diversified explosively. This was the golden age of the great sauropods — Brachiosaurus, Diplodocus, and Apatosaurus grew to staggering sizes. Predators like Allosaurus hunted in the shadows of these giants. The first birds also appeared, evolving from small feathered theropod dinosaurs.</p>
+      </div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-period">
+        <div class="period-name">Cretaceous</div>
+        <div class="period-mya">145–66 MYA</div>
+      </div>
+      <div class="timeline-content">
+        <h3>Peak Dominance</h3>
+        <p>The Cretaceous was dinosaur civilization at its most complex. Flowering plants transformed the landscape. Horned, armored, and crested dinosaurs thrived alongside the most iconic predators — Tyrannosaurus rex and Spinosaurus. Continents continued drifting, isolating dinosaur populations and driving enormous regional diversity across every continent.</p>
+      </div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-period">
+        <div class="period-name">K-Pg Event</div>
+        <div class="period-mya">66 MYA</div>
+      </div>
+      <div class="timeline-content">
+        <h3>The Great Extinction</h3>
+        <p>A 10-kilometer asteroid struck the Yucatán Peninsula, releasing energy a billion times greater than an atomic bomb. The impact triggered wildfires, mega-tsunamis, and a years-long "impact winter" that blocked sunlight and collapsed food chains. Three-quarters of all species perished — including all non-avian dinosaurs. Only small, feathered dinosaurs survived: they became modern birds.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- EVOLUTION -->
+<section class="evolution" id="evolution">
+  <div class="section-tag">Chapter 02</div>
+  <h2 class="section-title">Their Evolution</h2>
+
+  <div class="evo-grid">
+    <div class="evo-card">
+      <div class="evo-icon">🦴</div>
+      <div class="evo-num">245</div>
+      <div class="evo-unit">Million years ago</div>
+      <h3>Archosaur Origins</h3>
+      <p>Dinosaurs descended from archosaurs — a group that also gave rise to crocodilians. Key early traits: an upright stance with legs directly beneath the body, unlike sprawling reptiles. This gave them a major speed and endurance advantage.</p>
+    </div>
+    <div class="evo-card">
+      <div class="evo-icon">🍃</div>
+      <div class="evo-num">2</div>
+      <div class="evo-unit">Major groups</div>
+      <h3>The Great Split</h3>
+      <p>Dinosaurs split early into two orders based on hip structure: Saurischia ("lizard-hipped"), which includes sauropods and theropods, and Ornithischia ("bird-hipped"), which includes all the horned, armored, and duck-billed dinosaurs.</p>
+    </div>
+    <div class="evo-card">
+      <div class="evo-icon">🪶</div>
+      <div class="evo-num">160</div>
+      <div class="evo-unit">MYA — First feathers</div>
+      <h3>Feathers Evolve</h3>
+      <p>Feathers didn't appear for flight — they evolved first for insulation and display. Fossils from China reveal that many theropod dinosaurs, including close relatives of T. rex, were covered in feathers. This discovery transformed our understanding of what dinosaurs looked like.</p>
+    </div>
+    <div class="evo-card">
+      <div class="evo-icon">🐦</div>
+      <div class="evo-num">150</div>
+      <div class="evo-unit">MYA — Archaeopteryx</div>
+      <h3>The Bird Transition</h3>
+      <p>Archaeopteryx, discovered in Germany, is one of the most important fossils ever found. A perfect transitional form — it had feathers and wishbone like a bird, but teeth and a bony tail like a dinosaur. It proved that birds are living dinosaurs, not just relatives.</p>
+    </div>
+    <div class="evo-card">
+      <div class="evo-icon">📏</div>
+      <div class="evo-num">40m</div>
+      <div class="evo-unit">Patagotitan's length</div>
+      <h3>The Size Explosion</h3>
+      <p>Sauropods achieved sizes no land animal has matched before or since. Patagotitan mayorum weighed up to 70 tonnes. Their secret: a bird-like respiratory system with air sacs throughout their bones, making the skeleton lightweight despite enormous bulk.</p>
+    </div>
+    <div class="evo-card">
+      <div class="evo-icon">🧬</div>
+      <div class="evo-num">10K+</div>
+      <div class="evo-unit">Living species today</div>
+      <h3>Dinosaurs Survive</h3>
+      <p>Birds are avian dinosaurs — a fact now universally accepted by paleontologists. When you see a sparrow or an eagle, you're watching a living dinosaur. With over 10,000 species, birds are the most species-rich class of land vertebrates on Earth today.</p>
+    </div>
+  </div>
+</section>
+
+<!-- TYPES -->
+<section class="types" id="types">
+  <div class="section-tag">Chapter 03</div>
+  <h2 class="section-title">Notable Species</h2>
+
+  <div class="types-grid">
+
+    <div class="dino-card">
+      <div class="dino-era">Late Cretaceous · 68–66 MYA</div>
+      <div class="dino-name">Tyrannosaurus Rex</div>
+      <div class="dino-meaning">"Tyrant Lizard King"</div>
+      <p class="dino-desc">One of the largest land predators ever. Its bite force of 12,800 pounds per square inch could crush bone. Recent evidence suggests it may have had feathers in youth and excellent color vision.</p>
+      <div class="dino-tags"><span class="tag">Theropod</span><span class="tag">Carnivore</span><span class="tag">North America</span></div>
+      <div class="dino-emoji">🦖</div>
+    </div>
+
+    <div class="dino-card">
+      <div class="dino-era">Late Jurassic · 154–150 MYA</div>
+      <div class="dino-name">Brachiosaurus</div>
+      <div class="dino-meaning">"Arm Lizard"</div>
+      <p class="dino-desc">One of the tallest animals to ever live, reaching up to 13 meters high. Its front legs were longer than its hind legs, giving it a giraffe-like posture to browse treetop vegetation.</p>
+      <div class="dino-tags"><span class="tag">Sauropod</span><span class="tag">Herbivore</span><span class="tag">North America</span></div>
+      <div class="dino-emoji">🦕</div>
+    </div>
+
+    <div class="dino-card">
+      <div class="dino-era">Late Cretaceous · 68–66 MYA</div>
+      <div class="dino-name">Triceratops</div>
+      <div class="dino-meaning">"Three-Horned Face"</div>
+      <p class="dino-desc">One of the last and largest horned dinosaurs. Its massive frill may have been used for display and temperature regulation. It likely lived in herds and was a formidable opponent even for T. rex.</p>
+      <div class="dino-tags"><span class="tag">Ceratopsid</span><span class="tag">Herbivore</span><span class="tag">North America</span></div>
+      <div class="dino-emoji">🐊</div>
+    </div>
+
+    <div class="dino-card">
+      <div class="dino-era">Late Cretaceous · 74–65 MYA</div>
+      <div class="dino-name">Velociraptor</div>
+      <div class="dino-meaning">"Swift Plunderer"</div>
+      <p class="dino-desc">Far smaller than movies suggest — turkey-sized and covered in feathers. It used its famous sickle claw to pin prey, not slash it. Highly intelligent with a large brain-to-body ratio.</p>
+      <div class="dino-tags"><span class="tag">Theropod</span><span class="tag">Carnivore</span><span class="tag">Mongolia</span></div>
+      <div class="dino-emoji">🪶</div>
+    </div>
+
+    <div class="dino-card">
+      <div class="dino-era">Early Cretaceous · 130–125 MYA</div>
+      <div class="dino-name">Spinosaurus</div>
+      <div class="dino-meaning">"Spine Lizard"</div>
+      <p class="dino-desc">The largest predatory dinosaur known, even bigger than T. rex. It was semi-aquatic, with dense bones for buoyancy and a crocodile-like snout designed for catching fish in North African rivers.</p>
+      <div class="dino-tags"><span class="tag">Theropod</span><span class="tag">Carnivore</span><span class="tag">North Africa</span></div>
+      <div class="dino-emoji">🌊</div>
+    </div>
+
+    <div class="dino-card">
+      <div class="dino-era">Late Cretaceous · 76–75 MYA</div>
+      <div class="dino-name">Ankylosaurus</div>
+      <div class="dino-meaning">"Fused Lizard"</div>
+      <p class="dino-desc">A living tank — its entire back was armored with bony plates called osteoderms. Its tail ended in a massive bony club capable of breaking the leg bones of even a T. rex. One of nature's most effective defensive designs.</p>
+      <div class="dino-tags"><span class="tag">Ankylosaur</span><span class="tag">Herbivore</span><span class="tag">North America</span></div>
+      <div class="dino-emoji">🛡️</div>
+    </div>
+
+  </div>
+</section>
+
+<!-- FACTS BAND -->
+<div class="facts-band" id="facts">
+  <div class="facts-band-title">Did you know</div>
+  <div class="facts-scroll">
+    <div class="fact-item">
+      <div class="fact-num">66M</div>
+      <div class="fact-label">Years since non-avian dinosaurs went extinct</div>
+    </div>
+    <div class="fact-item">
+      <div class="fact-num">~700</div>
+      <div class="fact-label">Dinosaur species named and described so far</div>
+    </div>
+    <div class="fact-item">
+      <div class="fact-num">50kg</div>
+      <div class="fact-label">Weight of the smallest known dinosaur, Microraptor</div>
+    </div>
+    <div class="fact-item">
+      <div class="fact-num">70T</div>
+      <div class="fact-label">Estimated weight of Patagotitan — heaviest dinosaur</div>
+    </div>
+    <div class="fact-item">
+      <div class="fact-num">1824</div>
+      <div class="fact-label">Year the first dinosaur was formally described (Megalosaurus)</div>
+    </div>
+    <div class="fact-item">
+      <div class="fact-num">30yr</div>
+      <div class="fact-label">Estimated maximum lifespan of T. rex</div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <span>DINO — Earth's Ancient Giants</span>
+  <span>Paleontological Reference Site</span>
+</footer>
+
+<script>
+  // Scroll animations
+  const items = document.querySelectorAll('.timeline-item, .evo-card, .dino-card');
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach((e, i) => {
+      if (e.isIntersecting) {
+        e.target.style.animationDelay = (i * 0.07) + 's';
+        e.target.style.opacity = '1';
+        e.target.style.transform = 'translateY(0)';
+      }
+    });
+  }, { threshold: 0.1 });
+
+  items.forEach(el => {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(24px)';
+    el.style.transition = 'opacity 0.55s ease, transform 0.55s ease';
+    obs.observe(el);
+  });
+
+  // Hamburger menu
+  const toggle = document.querySelector('.nav-toggle');
+  const drawer = document.getElementById('navDrawer');
+
+  toggle.addEventListener('click', () => {
+    const isOpen = drawer.classList.toggle('open');
+    toggle.classList.toggle('open', isOpen);
+    toggle.setAttribute('aria-expanded', isOpen);
+    drawer.style.display = isOpen ? 'flex' : 'none';
+    document.body.style.overflow = isOpen ? 'hidden' : '';
+  });
+
+  // Close drawer on link click
+  drawer.querySelectorAll('a').forEach(link => {
+    link.addEventListener('click', () => {
+      drawer.classList.remove('open');
+      toggle.classList.remove('open');
+      toggle.setAttribute('aria-expanded', 'false');
+      drawer.style.display = 'none';
+      document.body.style.overflow = '';
+    });
+  });
+
+  // Show drawer correctly on resize
+  window.addEventListener('resize', () => {
+    if (window.innerWidth > 768) {
+      drawer.style.display = 'none';
+      drawer.classList.remove('open');
+      toggle.classList.remove('open');
+      document.body.style.overflow = '';
+    }
+  });
+</script>
+</body>
+</html>
